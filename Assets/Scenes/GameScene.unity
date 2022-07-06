@@ -295,6 +295,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0837f28358ca8a94ea1eb8682ab8de7a, type: 3}
+--- !u!1 &216312557 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6299330404458053088, guid: 0837f28358ca8a94ea1eb8682ab8de7a, type: 3}
+  m_PrefabInstance: {fileID: 198196046}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &248184426
 GameObject:
   m_ObjectHideFlags: 0
@@ -808,6 +813,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 438887516}
   m_CullTransparentMesh: 1
+--- !u!1 &513798725 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1433815372425583881, guid: bab4d9497a5da3b449f57ec4d914775e, type: 3}
+  m_PrefabInstance: {fileID: 88758811}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &561326371
 GameObject:
   m_ObjectHideFlags: 0
@@ -817,8 +827,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 561326373}
-  - component: {fileID: 561326372}
   - component: {fileID: 561326374}
+  - component: {fileID: 561326375}
+  - component: {fileID: 561326372}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -838,10 +849,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c76b188c3a23134fb81f1945fefb6f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wallMain: {fileID: 216312557}
+  ground: {fileID: 513798725}
   stickPrefap: {fileID: 2570123681551338973, guid: b589be1833a124c46b0f4d230f7e8425, type: 3}
   stairPrefap: {fileID: 2483643026108117236, guid: da3f1e04c09bb0645bc6c003cde52a6b, type: 3}
-  wallPrefap: {fileID: 6299330404458053088, guid: 0837f28358ca8a94ea1eb8682ab8de7a, type: 3}
-  scoreBoard: {fileID: 1036069094}
+  wallPrefap: {fileID: 2858803585449815180, guid: 8cc00fe5f797c684586278fcccc97044, type: 3}
+  materials:
+  - {fileID: 2100000, guid: 45b994e62ba04e449abd0d5262ef22b4, type: 2}
+  - {fileID: 2100000, guid: 85a5e96400fe0b442b1f7833bab0e67d, type: 2}
+  - {fileID: 2100000, guid: 7dc6911bfaa414e489344c9814b6ea1a, type: 2}
+  - {fileID: 2100000, guid: d0ec784a7fdec884f9eab3e6746e8b59, type: 2}
+  - {fileID: 2100000, guid: 0ac9316d8a7b43d4fb8d6aedb065af99, type: 2}
+  - {fileID: 2100000, guid: 6ad6d56ab70d96c4cbb9ef8153346d4c, type: 2}
+  - {fileID: 2100000, guid: e0698cd887143f84e97496030905b0a4, type: 2}
+  - {fileID: 2100000, guid: 97d1281dc5107bd4ca321fc17946ffc9, type: 2}
 --- !u!4 &561326373
 Transform:
   m_ObjectHideFlags: 0
@@ -868,15 +889,45 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32d3e811a11200c4f97795cf731bf8f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameOver: 0
   moneyText: {fileID: 1958455601}
   scoreBoardText: {fileID: 631727158}
   sweatParticle: {fileID: 817749955}
   explosionParticle: {fileID: 1270077601}
-  player: {fileID: 1120118908}
+  gameOver: 0
+  level: 0
+  speed: 0
+  income: 0
+  maxStamina: 0
+  currStamina: 0
+  money: 0
+  staminaLevel: 0
+  incomeLevel: 0
+  speedLevel: 0
+--- !u!114 &561326375
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 561326371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 259b6c167aa5a0c4b871f9f0562f7cfa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   taptostartUI: {fileID: 1718839143}
   upgradesUI: {fileID: 630480718}
   tryagainUI: {fileID: 1836431043}
+  moneyText: {fileID: 1958455601}
+  staminaUpgradeText: {fileID: 1300057010}
+  incomeUpgradeText: {fileID: 265938283}
+  speedUpgradeText: {fileID: 1567699953}
+  staminaLevelText: {fileID: 1824169448}
+  incomeLevelText: {fileID: 597310496}
+  speedLevelText: {fileID: 624284536}
+  staminaUpgradeButtonGameobject: {fileID: 905473883}
+  incomeUpgradeButtonGameobject: {fileID: 934179067}
+  speedUpgradeButtonGameobject: {fileID: 728767371}
 --- !u!1 &597310494
 GameObject:
   m_ObjectHideFlags: 0
@@ -889,7 +940,7 @@ GameObject:
   - component: {fileID: 597310497}
   - component: {fileID: 597310496}
   m_Layer: 5
-  m_Name: Text Upgrade Level
+  m_Name: Text Level
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1159,7 +1210,7 @@ GameObject:
   - component: {fileID: 624284537}
   - component: {fileID: 624284536}
   m_Layer: 5
-  m_Name: Text Upgrade Level
+  m_Name: Text Level
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1665,8 +1716,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 561326374}
-        m_TargetAssemblyTypeName: GameHandler, Assembly-CSharp
+      - m_Target: {fileID: 561326375}
+        m_TargetAssemblyTypeName: UIHandler, Assembly-CSharp
         m_MethodName: UpgradeSpeed
         m_Mode: 1
         m_Arguments:
@@ -1831,9 +1882,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 561326374}
-        m_TargetAssemblyTypeName: GameHandler, Assembly-CSharp
-        m_MethodName: updateStamina
+      - m_Target: {fileID: 561326375}
+        m_TargetAssemblyTypeName: UIHandler, Assembly-CSharp
+        m_MethodName: UpgradeStamina
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1962,8 +2013,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 561326374}
-        m_TargetAssemblyTypeName: GameHandler, Assembly-CSharp
+      - m_Target: {fileID: 561326375}
+        m_TargetAssemblyTypeName: UIHandler, Assembly-CSharp
         m_MethodName: UpgradeIncome
         m_Mode: 1
         m_Arguments:
@@ -2100,11 +2151,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1036069094 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7627240203245602214, guid: a87bf5547da86124b8f27e0290801dbc, type: 3}
-  m_PrefabInstance: {fileID: 1798270073}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1036069097 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7102939816403672860, guid: a87bf5547da86124b8f27e0290801dbc, type: 3}
@@ -2412,7 +2458,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 34c84e69e1b712543b88ed95a7d6cdb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0.5
   isPlayerMoving: 0
 --- !u!1 &1186675526
 GameObject:
@@ -2533,8 +2578,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 561326374}
-        m_TargetAssemblyTypeName: GameHandler, Assembly-CSharp
+      - m_Target: {fileID: 561326375}
+        m_TargetAssemblyTypeName: UIHandler, Assembly-CSharp
         m_MethodName: Restart
         m_Mode: 1
         m_Arguments:
@@ -3514,8 +3559,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 561326374}
-        m_TargetAssemblyTypeName: GameHandler, Assembly-CSharp
+      - m_Target: {fileID: 561326375}
+        m_TargetAssemblyTypeName: UIHandler, Assembly-CSharp
         m_MethodName: StartGame
         m_Mode: 1
         m_Arguments:

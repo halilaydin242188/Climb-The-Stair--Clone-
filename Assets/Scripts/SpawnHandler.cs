@@ -2,13 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpawnManager : MonoBehaviour
+public class SpawnHandler : MonoBehaviour
 {
+    public GameObject wallMain; // the first wall;
+    public GameObject ground;
     public GameObject stickPrefap;
     public GameObject stairPrefap;
     public GameObject wallPrefap;
-    public GameObject scoreBoard;
+    public Material[] materials;
 
+    private GameObject scoreBoard;
     private GameObject sticksParent;
     private GameObject stairsParent;
     private PlayerController playerControllerScript;
@@ -19,6 +22,7 @@ public class SpawnManager : MonoBehaviour
 
     void Start()
     {
+        scoreBoard = GameObject.Find("ScoreBoard");
         sticksParent = GameObject.Find("Sticks");
         stairsParent = GameObject.Find("Stairs");
         playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>();
@@ -26,19 +30,18 @@ public class SpawnManager : MonoBehaviour
 
         stairPrefap.transform.rotation.Set(0, 90, 0, stairPrefap.transform.rotation.w);
 
+        PrepareLevel();
+
         enabled = false;
     }
 
-    void Update()
+    public void SpawnNext()
     {
-        if ((Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)) && !playerControllerScript.isPlayerMoving && !gameHandlerScript.gameOver)
-        {
-            CreateStick();
-            CreateStick();
-            scoreBoard.transform.Translate(new Vector3(0, 0.14f, 0));
-            CreateStair();
-            CreateStair();
-        }
+        CreateStick();
+        CreateStick();
+        scoreBoard.transform.Translate(new Vector3(0, 0.14f, 0));
+        CreateStair();
+        CreateStair();
     }
 
     private void CreateStick()
@@ -49,7 +52,7 @@ public class SpawnManager : MonoBehaviour
     }
 
     private void CreateStair()
-    {   
+    {
         // Create a stair, rotate, set parent, update the variables
         Vector3 instantiatePos = new Vector3(stairPrefap.transform.position.x, stairSpawnPosY, stairPrefap.transform.position.z);
         GameObject stair = Instantiate(stairPrefap, instantiatePos, stairPrefap.transform.rotation);
@@ -63,5 +66,34 @@ public class SpawnManager : MonoBehaviour
         gameHandlerScript.updateMoney();
         gameHandlerScript.updateScoreBoard();
         gameHandlerScript.updateStamina();
+    }
+
+    private void PrepareLevel(int maxWallCount = 5)
+    {
+        ground.GetComponent<MeshRenderer>().material = materials[gameHandlerScript.level];
+
+        Material[] wallMaterials = { materials[gameHandlerScript.level], materials[gameHandlerScript.level] };
+        wallMain.GetComponent<MeshRenderer>().materials = wallMaterials;
+
+        const float startPosY = 2.7f;
+
+        for (int i = 1; i <= maxWallCount; i++)
+        {
+            Vector3 instantiatePos = new Vector3(-1f, startPosY + i * 5.3f, 0);
+            GameObject wall = Instantiate(wallPrefap, instantiatePos, wallPrefap.transform.rotation);
+            wall.GetComponent<MeshRenderer>().materials = wallMaterials;
+
+            wall.transform.SetParent(wallMain.transform);
+        }
+
+        // create a wall with next level's material to the end
+        Vector3 instPos = new Vector3(-1f, startPosY + (maxWallCount + 1) * 5.3f, 0);
+        GameObject lastWall = Instantiate(wallPrefap, instPos, wallPrefap.transform.rotation);
+        Material[] nextLevelWallMat = { materials[gameHandlerScript.level + 1], materials[gameHandlerScript.level + 1] };
+        lastWall.GetComponent<MeshRenderer>().materials = nextLevelWallMat;
+
+        lastWall.transform.SetParent(wallMain.transform);
+
+        gameHandlerScript.levelFinishPosY = 5f + (maxWallCount * 5.3f);
     }
 }

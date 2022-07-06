@@ -6,8 +6,11 @@ using UnityEngine;
 public class Data
 {
     public int level;
+    public int staminaLevel;
+    public int incomeLevel;
+    public int speedLevel;
     public float speed;
     public float money;
-    public float moneyAddition;
+    public float income;
     public float maxStamina;
 }

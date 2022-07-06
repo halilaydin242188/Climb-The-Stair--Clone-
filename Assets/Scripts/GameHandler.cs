@@ -8,40 +8,38 @@ using UnityEngine.SceneManagement;
 
 public class GameHandler : MonoBehaviour
 {
-    public bool gameOver = false;
     public TextMeshProUGUI moneyText;
     public TextMeshProUGUI scoreBoardText;
     public ParticleSystem sweatParticle;
     public ParticleSystem explosionParticle;
-    public GameObject player;
-    public GameObject taptostartUI;
-    public GameObject upgradesUI;
-    public GameObject tryagainUI;
+    public bool gameOver = false;
+    public float levelFinishPosY;
+    public int level;
+    public float speed;
+    public float income;
+    public float maxStamina;
+    public float currStamina;
+    public float money;
+    public int staminaLevel;
+    public int incomeLevel;
+    public int speedLevel;
 
-    private int level;
-    private float money;
-    private float moneyAddition;
-    private float maxStamina;
-    private float currStamina;
-    private float scoreBoardValue = 400f;
-    private SpawnManager spawnManagerScript;
-    private PlayerController playerControllerScript;
+    private SpawnHandler spawnHandlerScript;
     private CameraFollow cameraFollowScript;
+    private UIHandler uiHandlerScript;
+    private GameObject player;
+    private float scoreBoardValue = 400f;
 
 
     void Start()
     {
-        spawnManagerScript = GetComponent<SpawnManager>();
-        playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>();
+        spawnHandlerScript = GetComponent<SpawnHandler>();
+        uiHandlerScript = GetComponent<UIHandler>();
         cameraFollowScript = GameObject.Find("Main Camera").GetComponent<CameraFollow>();
+        player = GameObject.Find("Player");
 
-        LoadGame();
+        LoadData();
         currStamina = maxStamina;
-        moneyText.text = money.ToString();
-
-        tryagainUI.SetActive(false);
-        upgradesUI.SetActive(true);
-        taptostartUI.SetActive(true);
     }
 
     void Update()
@@ -50,18 +48,23 @@ public class GameHandler : MonoBehaviour
         {
             player.SetActive(false);
             this.gameObject.SetActive(false);
-            tryagainUI.SetActive(true);
             SaveData();
+            uiHandlerScript.GameOver();
         }
         else
         {
             explosionParticle.transform.position = player.transform.position + new Vector3(-0.5f, 0.36f, 0);
+
+            if (player.transform.position.y >= levelFinishPosY) // is level passed
+            {
+                Debug.Log("Game Won");
+            }
         }
     }
 
     public void updateMoney() // gets called from SpawnManager
     {
-        money += moneyAddition;
+        money += income;
         moneyText.text = money.ToString("0.0");
     }
 
@@ -86,62 +89,8 @@ public class GameHandler : MonoBehaviour
         }
     }
 
-    // functions for buttons
-    public void UpgradeStamina()
-    {
-        maxStamina += 10f;
-    }
-
-    public void UpgradeIncome()
-    {
-        moneyAddition += 0.1f;
-    }
-
-    public void UpgradeSpeed()
-    {
-        playerControllerScript.speed += 0.1f;
-    }
-
-    public void Restart()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
-
-    public void StartGame()
-    {
-        taptostartUI.SetActive(false);
-        upgradesUI.SetActive(false);
-
-        playerControllerScript.enabled = true;
-        cameraFollowScript.enabled = true;
-        spawnManagerScript.enabled = true;
-    }
-
-    // save/load game data
-    private Data CreateDataObject()
-    {
-        Data data = new Data();
-        data.level = level;
-        data.speed = playerControllerScript.speed;
-        data.money = money;
-        data.moneyAddition = moneyAddition;
-        data.maxStamina = maxStamina;
-
-        return data;
-    }
-
-    private void SaveData()
-    {
-        Data data = CreateDataObject();
-
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(Application.persistentDataPath + "/gamedata.data");
-        bf.Serialize(file, data);
-        file.Close();
-        Debug.Log("Game Saved");
-    }
-
-    private void LoadGame()
+    // save/load/get game data
+    public Data GetData()
     {
         if (File.Exists(Application.persistentDataPath + "/gamedata.data"))
         {
@@ -150,20 +99,61 @@ public class GameHandler : MonoBehaviour
             Data data = (Data)bf.Deserialize(file);
             file.Close();
 
-            level = data.level;
-            playerControllerScript.speed = data.speed;
-            money = data.money;
-            moneyAddition = data.moneyAddition;
-            maxStamina = data.maxStamina;
+            return data;
         }
-        else // no saved data, initialize the variables
+        else
         {
-            level = 1;
-            playerControllerScript.speed = 1f;
-            money = 0;
-            moneyAddition = 0.5f;
-            maxStamina = 20f;
+            Data data = new Data();
+            data.level = 1;
+            data.staminaLevel = 1;
+            data.incomeLevel = 1;
+            data.speedLevel = 1;
+            data.speed = 0.5f;
+            data.money = 0;
+            data.income = 0.5f;
+            data.maxStamina = 20f;
+
+            return data;
         }
+    }    
+    private Data CreateDataObject()
+    {
+        Data data = new Data();
+        data.level = level;
+        data.staminaLevel = staminaLevel;
+        data.incomeLevel = incomeLevel;
+        data.speedLevel = speedLevel;
+        data.speed = speed;
+        data.money = money;
+        data.income = income;
+        data.maxStamina = maxStamina;
+
+        return data;
+    }
+    public void SaveData()
+    {
+        Data data = CreateDataObject();
+
+        BinaryFormatter bf = new BinaryFormatter();
+        FileStream file = File.Create(Application.persistentDataPath + "/gamedata.data");
+        bf.Serialize(file, data);
+        file.Close();
+        Debug.Log("Game Saved");
+        Debug.Log(Application.persistentDataPath);
+    }
+
+    private void LoadData()
+    {
+        Data data = GetData();
+
+        level = data.level;
+        staminaLevel = data.staminaLevel;
+        incomeLevel = data.incomeLevel;
+        speedLevel = data.speedLevel;
+        speed = data.speed;
+        money = data.money;
+        income = data.income;
+        maxStamina = data.maxStamina;
     }
 
 }
