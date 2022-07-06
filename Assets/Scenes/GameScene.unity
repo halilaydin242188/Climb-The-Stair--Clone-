@@ -862,7 +862,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 0ac9316d8a7b43d4fb8d6aedb065af99, type: 2}
   - {fileID: 2100000, guid: 6ad6d56ab70d96c4cbb9ef8153346d4c, type: 2}
   - {fileID: 2100000, guid: e0698cd887143f84e97496030905b0a4, type: 2}
-  - {fileID: 2100000, guid: 97d1281dc5107bd4ca321fc17946ffc9, type: 2}
+  - {fileID: 2100000, guid: 50934f6a4e13e1a4c9b28336e5601a88, type: 2}
 --- !u!4 &561326373
 Transform:
   m_ObjectHideFlags: 0
@@ -894,6 +894,7 @@ MonoBehaviour:
   sweatParticle: {fileID: 817749955}
   explosionParticle: {fileID: 1270077601}
   gameOver: 0
+  levelFinishPosY: 0
   level: 0
   speed: 0
   income: 0

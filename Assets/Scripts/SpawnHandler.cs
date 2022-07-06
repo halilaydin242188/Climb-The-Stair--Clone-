@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class SpawnHandler : MonoBehaviour
 {
+    public bool isLevelsFinished = false;
+    public float lastWallPosY = 0; // for the endless level
     public GameObject wallMain; // the first wall;
     public GameObject ground;
     public GameObject stickPrefap;
@@ -19,6 +21,7 @@ public class SpawnHandler : MonoBehaviour
     private float stickSpawnPosY = 0.08f;
     private float stairSpawnPosY = 0.04f;
     private float stairRotation = 15;
+    private Data data;
 
     void Start()
     {
@@ -29,6 +32,8 @@ public class SpawnHandler : MonoBehaviour
         gameHandlerScript = GameObject.Find("GameManager").GetComponent<GameHandler>();
 
         stairPrefap.transform.rotation.Set(0, 90, 0, stairPrefap.transform.rotation.w);
+
+        data = gameHandlerScript.GetData();
 
         PrepareLevel();
 
@@ -68,32 +73,56 @@ public class SpawnHandler : MonoBehaviour
         gameHandlerScript.updateStamina();
     }
 
-    private void PrepareLevel(int maxWallCount = 5)
+    private void PrepareLevel(int wallCount = 5)
     {
-        ground.GetComponent<MeshRenderer>().material = materials[gameHandlerScript.level];
-
-        Material[] wallMaterials = { materials[gameHandlerScript.level], materials[gameHandlerScript.level] };
-        wallMain.GetComponent<MeshRenderer>().materials = wallMaterials;
-
-        const float startPosY = 2.7f;
-
-        for (int i = 1; i <= maxWallCount; i++)
+        if (data.level == materials.Length + 1) // levels are finished, prepare endless map
         {
-            Vector3 instantiatePos = new Vector3(-1f, startPosY + i * 5.3f, 0);
-            GameObject wall = Instantiate(wallPrefap, instantiatePos, wallPrefap.transform.rotation);
-            wall.GetComponent<MeshRenderer>().materials = wallMaterials;
+            isLevelsFinished = true;
+        }
+        else
+        {
+            ground.GetComponent<MeshRenderer>().material = materials[data.level - 1];
 
-            wall.transform.SetParent(wallMain.transform);
+            Material[] wallMaterials = { materials[data.level - 1], materials[data.level - 1] };
+            wallMain.GetComponent<MeshRenderer>().materials = wallMaterials;
+
+            const float startPosY = 2.7f;
+
+            for (int i = 1; i <= wallCount; i++)
+            {
+                Vector3 instantiatePos = new Vector3(-1f, startPosY + i * 5.3f, 0);
+                GameObject wall = Instantiate(wallPrefap, instantiatePos, wallPrefap.transform.rotation);
+                wall.GetComponent<MeshRenderer>().materials = wallMaterials;
+
+                wall.transform.SetParent(wallMain.transform);
+            }
+
+            if (data.level < materials.Length)// if not last level, create a wall with next level's material to the end
+            {
+                Vector3 instPos = new Vector3(-1f, startPosY + (wallCount + 1) * 5.3f, 0);
+                GameObject lastWall = Instantiate(wallPrefap, instPos, wallPrefap.transform.rotation);
+                Material[] nextLevelWallMat = { materials[data.level], materials[data.level] };
+                lastWall.GetComponent<MeshRenderer>().materials = nextLevelWallMat;
+
+                lastWall.transform.SetParent(wallMain.transform);
+                gameHandlerScript.levelFinishPosY = 5f + (wallCount * 5.3f);
+            }
+            else
+                gameHandlerScript.levelFinishPosY = 5f + ((wallCount - 1) * 5.3f);
         }
 
-        // create a wall with next level's material to the end
-        Vector3 instPos = new Vector3(-1f, startPosY + (maxWallCount + 1) * 5.3f, 0);
-        GameObject lastWall = Instantiate(wallPrefap, instPos, wallPrefap.transform.rotation);
-        Material[] nextLevelWallMat = { materials[gameHandlerScript.level + 1], materials[gameHandlerScript.level + 1] };
-        lastWall.GetComponent<MeshRenderer>().materials = nextLevelWallMat;
+    }
 
-        lastWall.transform.SetParent(wallMain.transform);
+    public void PrepareEndlessLevel()
+    {
+        float startPosY = 2.7f + lastWallPosY;
+        for (int i = 1; i <= 5; i++)
+            {
+                Vector3 instantiatePos = new Vector3(-1f, startPosY + i * 5.3f, 0);
+                GameObject wall = Instantiate(wallPrefap, instantiatePos, wallPrefap.transform.rotation);
 
-        gameHandlerScript.levelFinishPosY = 5f + (maxWallCount * 5.3f);
+                wall.transform.SetParent(wallMain.transform);
+            }
+        lastWallPosY += 5 * 5.3f;
     }
 }

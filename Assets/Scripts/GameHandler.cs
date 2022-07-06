@@ -29,6 +29,7 @@ public class GameHandler : MonoBehaviour
     private UIHandler uiHandlerScript;
     private GameObject player;
     private float scoreBoardValue = 400f;
+    private Data data;
 
 
     void Start()
@@ -38,7 +39,8 @@ public class GameHandler : MonoBehaviour
         cameraFollowScript = GameObject.Find("Main Camera").GetComponent<CameraFollow>();
         player = GameObject.Find("Player");
 
-        LoadData();
+        data = GetData();
+        LoadData(data);
         currStamina = maxStamina;
     }
 
@@ -54,10 +56,20 @@ public class GameHandler : MonoBehaviour
         else
         {
             explosionParticle.transform.position = player.transform.position + new Vector3(-0.5f, 0.36f, 0);
-
-            if (player.transform.position.y >= levelFinishPosY) // is level passed
+            
+            if (spawnHandlerScript.isLevelsFinished) // endless level
             {
-                Debug.Log("Game Won");
+                if (player.transform.position.y >= spawnHandlerScript.lastWallPosY - 5f) // add more walls
+                {
+                    spawnHandlerScript.PrepareEndlessLevel();
+                }
+            }
+            else
+            {
+                if (player.transform.position.y >= levelFinishPosY) // is level passed
+                {
+                    uiHandlerScript.LevelPassed();
+                }
             }
         }
     }
@@ -142,10 +154,8 @@ public class GameHandler : MonoBehaviour
         Debug.Log(Application.persistentDataPath);
     }
 
-    private void LoadData()
+    private void LoadData(Data data)
     {
-        Data data = GetData();
-
         level = data.level;
         staminaLevel = data.staminaLevel;
         incomeLevel = data.incomeLevel;

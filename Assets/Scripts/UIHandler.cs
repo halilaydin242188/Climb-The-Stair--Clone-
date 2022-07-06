@@ -25,6 +25,7 @@ public class UIHandler : MonoBehaviour
     private PlayerController playerControllerScript;
     private CameraFollow cameraFollowScript;
     private SpawnHandler spawnHandlerScript;
+    private Data data;
 
     private void Start()
     {
@@ -32,6 +33,8 @@ public class UIHandler : MonoBehaviour
         playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>();
         cameraFollowScript = GameObject.Find("Main Camera").GetComponent<CameraFollow>();
         spawnHandlerScript = GetComponent<SpawnHandler>();
+
+        data = gameHandlerScript.GetData();
 
         // at start, configure the ui elements
         StartUI();
@@ -42,9 +45,15 @@ public class UIHandler : MonoBehaviour
         tryagainUI.SetActive(true);
     }
 
+    public void LevelPassed()
+    {
+        gameHandlerScript.level++;
+        gameHandlerScript.SaveData();
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
     public void StartUI()
     {
-        Data data = gameHandlerScript.GetData();
         moneyText.text = data.money.ToString("0.0");
         staminaUpgradeText.text = (data.staminaLevel * 20f).ToString("0.0");
         incomeUpgradeText.text = (data.incomeLevel * 20f).ToString("0.0");
@@ -57,10 +66,10 @@ public class UIHandler : MonoBehaviour
         upgradesUI.SetActive(true);
         taptostartUI.SetActive(true);
 
-        SetButtonsInteractable();
+        CheckButtonsInteractable();
     }
 
-    private void SetButtonsInteractable()
+    private void CheckButtonsInteractable()
     {
         staminaUpgradeButtonGameobject.GetComponent<Button>().interactable = (gameHandlerScript.money >= float.Parse(staminaUpgradeText.text));
         incomeUpgradeButtonGameobject.GetComponent<Button>().interactable = (gameHandlerScript.money >= float.Parse(incomeUpgradeText.text));
@@ -86,7 +95,8 @@ public class UIHandler : MonoBehaviour
             staminaUpgradeText.text = upgradeValue.ToString("0.0");
 
             gameHandlerScript.SaveData();
-            SetButtonsInteractable();
+            data = gameHandlerScript.GetData();
+            CheckButtonsInteractable();
         }
     }
 
@@ -105,7 +115,8 @@ public class UIHandler : MonoBehaviour
             incomeUpgradeText.text = upgradeValue.ToString("0.0");
 
             gameHandlerScript.SaveData();
-            SetButtonsInteractable();
+            data = gameHandlerScript.GetData();
+            CheckButtonsInteractable();
         }
     }
 
@@ -124,7 +135,8 @@ public class UIHandler : MonoBehaviour
             speedUpgradeText.text = upgradeValue.ToString("0.0");
 
             gameHandlerScript.SaveData();
-            SetButtonsInteractable();
+            data = gameHandlerScript.GetData();
+            CheckButtonsInteractable();
         }
     }
 
