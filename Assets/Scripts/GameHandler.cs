@@ -24,6 +24,7 @@ public class GameHandler : MonoBehaviour
     public int incomeLevel;
     public int speedLevel;
 
+    private PlayerController playerControllerScript;
     private SpawnHandler spawnHandlerScript;
     private CameraFollow cameraFollowScript;
     private UIHandler uiHandlerScript;
@@ -37,6 +38,7 @@ public class GameHandler : MonoBehaviour
         spawnHandlerScript = GetComponent<SpawnHandler>();
         uiHandlerScript = GetComponent<UIHandler>();
         cameraFollowScript = GameObject.Find("Main Camera").GetComponent<CameraFollow>();
+        playerControllerScript = GameObject.Find("Player").GetComponent<PlayerController>();
         player = GameObject.Find("Player");
 
         data = GetData();
@@ -56,7 +58,12 @@ public class GameHandler : MonoBehaviour
         else
         {
             explosionParticle.transform.position = player.transform.position + new Vector3(-0.5f, 0.36f, 0);
-            
+
+            SweatAnimHandle();
+
+            if (!playerControllerScript.isPlayerMoving && currStamina < maxStamina)
+                currStamina += 0.002f;
+
             if (spawnHandlerScript.isLevelsFinished) // endless level
             {
                 if (player.transform.position.y >= spawnHandlerScript.lastWallPosY - 5f) // add more walls
@@ -74,21 +81,8 @@ public class GameHandler : MonoBehaviour
         }
     }
 
-    public void updateMoney() // gets called from SpawnManager
+    private void SweatAnimHandle()
     {
-        money += income;
-        moneyText.text = money.ToString("0.0");
-    }
-
-    public void updateScoreBoard() // gets called from SpawnManager
-    {
-        scoreBoardValue -= 0.07f;
-        scoreBoardText.text = scoreBoardValue.ToString("0.0") + "m";
-    }
-
-    public void updateStamina() // gets called from SpawnManager
-    {
-        currStamina -= 0.5f;
         if (currStamina <= 0)
         {
             explosionParticle.Play();
@@ -99,6 +93,27 @@ public class GameHandler : MonoBehaviour
             if (!sweatParticle.isPlaying)
                 sweatParticle.Play();
         }
+        else if (sweatParticle.isPlaying)
+        {
+            sweatParticle.Stop();
+        }
+    }
+
+    public void updateMoney() // gets called from SpawnHandler
+    {
+        money += income;
+        moneyText.text = money.ToString("0.0");
+    }
+
+    public void updateScoreBoard() // gets called from SpawnHandler
+    {
+        scoreBoardValue -= 0.07f;
+        scoreBoardText.text = scoreBoardValue.ToString("0.0") + "m";
+    }
+
+    public void updateStamina() // gets called from SpawnHandler
+    {
+        currStamina -= 0.5f;
     }
 
     // save/load/get game data
@@ -116,6 +131,7 @@ public class GameHandler : MonoBehaviour
         else
         {
             Data data = new Data();
+
             data.level = 1;
             data.staminaLevel = 1;
             data.incomeLevel = 1;
@@ -127,7 +143,7 @@ public class GameHandler : MonoBehaviour
 
             return data;
         }
-    }    
+    }
     private Data CreateDataObject()
     {
         Data data = new Data();

@@ -5,12 +5,13 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public bool isPlayerMoving = false;
+    public float speed;
+    public float moveValue; 
 
     private Animator playerAnim;
     private SpawnHandler spawnHandlerScript;
     private GameHandler gameHandlerScript;
-    private float currRotation = 30f; // to animate climbing, changes value between 0 to 30f for every climb
-    private float speed;
+    public float currRotation = 30; // to animate climbing, changes value between 0 to 30f for every climb
 
     void Start()
     {
@@ -19,6 +20,8 @@ public class PlayerController : MonoBehaviour
         gameHandlerScript = GameObject.Find("GameManager").GetComponent<GameHandler>();
 
         speed = gameHandlerScript.speed;
+
+        SetAnimSpeed();
 
         enabled = false;
     }
@@ -40,16 +43,23 @@ public class PlayerController : MonoBehaviour
 
     private void MovePlayer()
     {
-
+        //float moveValue;
         if (currRotation < 30f)
         {
-            transform.RotateAround(Vector3.zero, Vector3.up, speed);
-            transform.Translate(0, 0.14f / (30f / speed), 0);
+            moveValue = (currRotation + speed > 30f) ? (30f - currRotation) : speed;
 
-            currRotation += speed;
+            transform.RotateAround(Vector3.zero, Vector3.up, moveValue);
+            transform.Translate(0, 0.14f / (30f / moveValue), 0);
+
+            currRotation += moveValue;
         }
         else
             isPlayerMoving = false;
 
+    }
+
+    public void SetAnimSpeed()
+    {
+        playerAnim.SetFloat("climbSpeed", 1.8f + ((gameHandlerScript.speedLevel - 1) * 0.2f));
     }
 }

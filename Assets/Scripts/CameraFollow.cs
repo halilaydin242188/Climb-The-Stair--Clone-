@@ -16,7 +16,9 @@ public class CameraFollow : MonoBehaviour
 
         enabled = false;
     }
-
+    private void LateUpdate() {
+        
+    }
     void Update()
     {
         /*

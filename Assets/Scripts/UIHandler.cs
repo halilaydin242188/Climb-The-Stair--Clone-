@@ -10,7 +10,9 @@ public class UIHandler : MonoBehaviour
     public GameObject taptostartUI;
     public GameObject upgradesUI;
     public GameObject tryagainUI;
+    public GameObject levelIndicatorUI;
     public TextMeshProUGUI moneyText;
+    public TextMeshProUGUI levelText;
     public TextMeshProUGUI staminaUpgradeText;
     public TextMeshProUGUI incomeUpgradeText;
     public TextMeshProUGUI speedUpgradeText;
@@ -48,6 +50,8 @@ public class UIHandler : MonoBehaviour
     public void LevelPassed()
     {
         gameHandlerScript.level++;
+        gameHandlerScript.speed = 0.5f + (gameHandlerScript.level * 0.1f);
+        gameHandlerScript.maxStamina /= 2;
         gameHandlerScript.SaveData();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
@@ -55,16 +59,18 @@ public class UIHandler : MonoBehaviour
     public void StartUI()
     {
         moneyText.text = data.money.ToString("0.0");
-        staminaUpgradeText.text = (data.staminaLevel * 20f).ToString("0.0");
-        incomeUpgradeText.text = (data.incomeLevel * 20f).ToString("0.0");
-        speedUpgradeText.text = (data.speedLevel * 20f).ToString("0.0");
+        levelText.text = "Level " + data.level.ToString();
+        staminaUpgradeText.text = (Mathf.Pow(1.15f, data.staminaLevel-1) * 20f).ToString("0.0");
+        incomeUpgradeText.text = (Mathf.Pow(1.15f, data.incomeLevel-1) * 20f).ToString("0.0");
+        speedUpgradeText.text = (Mathf.Pow(1.15f, data.speedLevel-1) * 20f).ToString("0.0");
         staminaLevelText.text = "LVL " + data.staminaLevel;
         incomeLevelText.text = "LVL " + data.incomeLevel;
         speedLevelText.text = "LVL " + data.speedLevel;
-        
+
         tryagainUI.SetActive(false);
         upgradesUI.SetActive(true);
         taptostartUI.SetActive(true);
+        levelIndicatorUI.SetActive(true);
 
         CheckButtonsInteractable();
     }
@@ -91,8 +97,7 @@ public class UIHandler : MonoBehaviour
 
             gameHandlerScript.maxStamina += 10f;
             gameHandlerScript.currStamina = gameHandlerScript.maxStamina;
-            upgradeValue += 20f;
-            staminaUpgradeText.text = upgradeValue.ToString("0.0");
+            staminaUpgradeText.text = (Mathf.Pow(1.15f, gameHandlerScript.staminaLevel-1) * 20f).ToString("0.0");
 
             gameHandlerScript.SaveData();
             data = gameHandlerScript.GetData();
@@ -111,8 +116,7 @@ public class UIHandler : MonoBehaviour
             incomeLevelText.text = "LVL " + gameHandlerScript.incomeLevel;
 
             gameHandlerScript.income += 0.1f;
-            upgradeValue += 20f;
-            incomeUpgradeText.text = upgradeValue.ToString("0.0");
+            incomeUpgradeText.text = (Mathf.Pow(1.15f, gameHandlerScript.incomeLevel-1) * 20f).ToString("0.0");
 
             gameHandlerScript.SaveData();
             data = gameHandlerScript.GetData();
@@ -131,12 +135,14 @@ public class UIHandler : MonoBehaviour
             speedLevelText.text = "LVL " + gameHandlerScript.speedLevel;
 
             gameHandlerScript.speed += 0.05f;
-            upgradeValue += 20f;
-            speedUpgradeText.text = upgradeValue.ToString("0.0");
+            speedUpgradeText.text = (Mathf.Pow(1.15f, gameHandlerScript.speedLevel-1) * 20f).ToString("0.0");
 
             gameHandlerScript.SaveData();
             data = gameHandlerScript.GetData();
             CheckButtonsInteractable();
+
+            playerControllerScript.speed = data.speed;
+            playerControllerScript.SetAnimSpeed();
         }
     }
 
@@ -149,6 +155,7 @@ public class UIHandler : MonoBehaviour
     {
         taptostartUI.SetActive(false);
         upgradesUI.SetActive(false);
+        levelIndicatorUI.SetActive(false);
 
         playerControllerScript.enabled = true;
         cameraFollowScript.enabled = true;

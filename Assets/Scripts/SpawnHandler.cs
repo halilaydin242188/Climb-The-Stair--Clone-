@@ -35,7 +35,7 @@ public class SpawnHandler : MonoBehaviour
 
         data = gameHandlerScript.GetData();
 
-        PrepareLevel();
+        PrepareLevel(data.level + 2);
 
         enabled = false;
     }
@@ -73,7 +73,7 @@ public class SpawnHandler : MonoBehaviour
         gameHandlerScript.updateStamina();
     }
 
-    private void PrepareLevel(int wallCount = 5)
+    private void PrepareLevel(int wallCount = 3)
     {
         if (data.level == materials.Length + 1) // levels are finished, prepare endless map
         {
@@ -90,7 +90,7 @@ public class SpawnHandler : MonoBehaviour
 
             for (int i = 1; i <= wallCount; i++)
             {
-                Vector3 instantiatePos = new Vector3(-1f, startPosY + i * 5.3f, 0);
+                Vector3 instantiatePos = new Vector3(-1f, startPosY + i * 5.3f, i * 0.001f);
                 GameObject wall = Instantiate(wallPrefap, instantiatePos, wallPrefap.transform.rotation);
                 wall.GetComponent<MeshRenderer>().materials = wallMaterials;
 
@@ -99,7 +99,7 @@ public class SpawnHandler : MonoBehaviour
 
             if (data.level < materials.Length)// if not last level, create a wall with next level's material to the end
             {
-                Vector3 instPos = new Vector3(-1f, startPosY + (wallCount + 1) * 5.3f, 0);
+                Vector3 instPos = new Vector3(-1f, startPosY + (wallCount + 1) * 5.3f, (wallCount + 1) * 0.001f);
                 GameObject lastWall = Instantiate(wallPrefap, instPos, wallPrefap.transform.rotation);
                 Material[] nextLevelWallMat = { materials[data.level], materials[data.level] };
                 lastWall.GetComponent<MeshRenderer>().materials = nextLevelWallMat;
