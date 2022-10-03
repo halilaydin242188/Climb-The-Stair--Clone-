@@ -2,7 +2,7 @@
 
 ## Climb The Stair mobile game's simple clone made with Unity game engine.
 
-### current implementations:
+### current implementations
 - store data in local storage
 - level system
 - loading screen
